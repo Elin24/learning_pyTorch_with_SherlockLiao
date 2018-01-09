@@ -35,13 +35,12 @@ plt.show()
 
 # ---
 # ## 目标
-# 使用前三个月的客流量预测整年的飞机客流量。
+# 给定前三个月的客流量预测当前月的飞机客流量。
 # 
 # 以1949年到1958年的数据作为训练集， 1959和1960年的数据用作测试集。
 # ## 方法
 # 1. 模型使用某三个月的数据作为输入，获得第四个月的客流量
-# 2. 然后使用两个月的流量+第四个月的流量，预测第5个月的客流量
-# 3. 以此类推获得整年的客流量
+# 2. 以此类推进行测试
 # 
 # ## 比较
 # 创建三个模型进行结果比较 : `FC`, `RNN`, `LSTM`, `GRU1`, `GRU2`
@@ -72,6 +71,13 @@ dataSet = data.values
 dataSet = dataSet.astype('float32')
 print('dataSet shape :\t', dataSet.shape)
 
+# 数据归一化
+def MinMaxScaler(X) :
+    mx, mi = np.max(X), np.min(X)
+    X_std = (X - mi) / (mx - mi)
+    return X_std, mi, mx - mi
+
+dataSet, dataMin, scala = MinMaxScaler(dataSet)
 
 # 将数据分为训练集和测试集
 train = dataSet[:12*10]
@@ -84,36 +90,4 @@ print('real data shape :', real.shape)
 
 
 input_size = 3
-
-
-# In[6]:
-
-
-# 制造训练集
-def create_dataset(dataset, look_back) :
-    dataX, dataY = [], []
-    for i in range(look_back, len(dataset)) :
-        x = dataset[i - look_back: i]
-        y = dataset[i]
-        dataX.append(x)
-        dataY.append(y)
-    return np.array(dataX), np.array(dataY)
-
-trainX, trainY = create_dataset(train, input_size)
-print(trainX.shape, trainY.shape)
-
-
-# In[7]:
-
-
-# 制造测试集, 选择real数据中第1, 7, 11开始的三个月份作为测试集
-
-startMonth = [0, 6, 10] # 下标比真实月份少1
-test, result = [], []
-for i in startMonth :
-    test.append(real[i:i+3, :])
-    result.append(real[i:i+12, :])
-test = np.array(test)
-result = np.array(result).reshape(-1, 12)
-print(test.shape, result.shape)
 
