@@ -75,13 +75,13 @@ print('dataSet shape :\t', dataSet.shape)
 def MinMaxScaler(X) :
     mx, mi = np.max(X), np.min(X)
     X_std = (X - mi) / (mx - mi)
-    return X_std, mi, mx - mi
+    return X_std
 
-dataSet, dataMin, scala = MinMaxScaler(dataSet)
+dataSet = MinMaxScaler(dataSet)
 
 # 将数据分为训练集和测试集
 train = dataSet[:12*10]
-real = dataSet[12*10:]
+real = dataSet
 print('train data shape :', train.shape)
 print('real data shape :', real.shape)
 
